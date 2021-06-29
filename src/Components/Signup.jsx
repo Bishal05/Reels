@@ -2,7 +2,7 @@ import React,{useState,useContext} from 'react'
 import { AuthContext } from '../Contexts/AuthContext';
 import { database, storage } from '../firebase';
 
-function Sigin(props) {
+function Signup(props) {
 
     const [userName,setUserName]=useState(""); //state in functional componenet 
     const [email,setEmail]=useState("");  
@@ -20,7 +20,8 @@ function Sigin(props) {
 
             setLoader(false);
             console.log("hello")
-            let res=signup(email,password);
+            console.log(signup);
+            let res=await signup(email,password);
             console.log(res);
             let uid=res.user.uid;
             console.log("hello3")
@@ -101,4 +102,4 @@ function Sigin(props) {
     )
 }
 
-export default Sigin
+export default Signup

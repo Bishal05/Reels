@@ -3,7 +3,7 @@ import './App.css';
 import { AuthProvider,AuthContext } from './Contexts/AuthContext';
 import {BrowserRouter as Router,Route,Redirect,Switch} from "react-router-dom"
 import Login from './Components/Login';
-import Signin from './Components/Signin';
+import Signup from './Components/Signup';
 import Feed from './Components/Feed';
 import Profile from './Components/Profile';
 
@@ -14,7 +14,7 @@ function App() {
         <AuthProvider>
           <Switch>
             <Route path="/login" component={Login}></Route>
-            <Route path="/signin" component={Signin}></Route>
+            <Route path="/signup" component={Signup}></Route>
             <Route path="/profile" component={Profile}></Route>
             <ProtectedRoute path="/" exact abc={Feed}></ProtectedRoute>
           </Switch>

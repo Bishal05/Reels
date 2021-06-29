@@ -14,7 +14,8 @@ export function AuthProvider({children}){
         return auth.signOut();
     }
 
-    async function singup(email,password){
+    async function signup(email,password){
+        console.log(auth);
         return await auth.createUserWithEmailAndPassword(email,password);
     }
 
@@ -32,7 +33,7 @@ export function AuthProvider({children}){
         login,
         signOut,
         currentUser,
-        singup
+        signup
     }
 
     return(
