@@ -1,56 +1,36 @@
-import react,{useState,useEffect} from 'react'
+import react,{useState,useEffect,useContext} from 'react'
+import { AuthContext } from '../Contexts/AuthContext';
 import auth from '../firebase';
 
-function Login() {
-
+function Login(props) {
+    let {login}=useContext(AuthContext);
     const [email,setEmail]=useState(""); //state in functional componenet 
     const [password,setPassword]=useState(""); 
-    const[user,setUser]=useState(null);
-    const [error,setError]=useState(false)
     const [loader,setLoader]=useState(false)
-    const [mainLoader,setMainLoader]=useState(true)
 
-    const handelSubmit=async()=>{
+    const handelSubmit=async(e)=>{
+        e.preventDefault()
         try {
             setLoader(true);
-            const resp=await auth.signInWithEmailAndPassword(email,password);
-            console.log(resp.user);
-            setUser(resp.user);
+            await login(email,password);
+            // console.log(resp.user);
             setLoader(false);
+            props.history.push("/");
         } catch (error) {
-            setError(true);
             setLoader(false);
+            setEmail("");
+            setPassword("");
         }
-        setEmail("");
-        setPassword("");
     }
 
-    const handelInputEmail=(e)=>{
-        setEmail(e.target.value); //setting state 
-    }
 
-    const handelInputPassword=(e)=>{
-        setPassword(e.target.value);
-    }
-
-    useEffect(()=>{
-        auth.onAuthStateChanged((user)=>{
-            setUser(user);
-            setMainLoader(false);
-        })
-    },[])
     return (
-        <>
-        {mainLoader==true?<h1>Wait for a second</h1>:
-        loader==true?<h1>Loading....</h1>:
-        user!=null?<h1>user logedin {user.uid}</h1>:
+        
         <>
             <h1>FireBase Login</h1>
-            <input type="email" value={email} onChange={handelInputEmail}/>
-            <input type="password" value={password} onChange={handelInputPassword}/>
-            <button onClick={handelSubmit}>Submit</button>
-        </>
-        }
+            <input type="email" value={email} onChange={(e)=>{setEmail(e.target.value)}}/>
+            <input type="password" value={password} onChange={(e)=>{setPassword(e.target.value)}}/>
+            <button onClick={handelSubmit} disabled={loader}>Submit</button>
         </>
     )
 }
