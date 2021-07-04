@@ -7,9 +7,9 @@ import Intersection from "./IntersectionDemo/Intercetion"
 
 ReactDOM.render(
   <React.StrictMode>
-    {/* <App /> */}
+    <App />
     {/* <Material></Material> */}
-    <Intersection></Intersection>
+    {/* <Intersection></Intersection> */}
 
   </React.StrictMode>,
   document.getElementById('root')
