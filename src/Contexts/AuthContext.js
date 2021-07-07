@@ -10,7 +10,7 @@ export function AuthProvider({children}){
         return auth.signInWithEmailAndPassword(email,password);
     }
 
-    async function signOut(){
+    async function signout(){
         return auth.signOut();
     }
 
@@ -31,7 +31,7 @@ export function AuthProvider({children}){
 
     const value={
         login,
-        signOut,
+        signout,
         currentUser,
         signup
     }
