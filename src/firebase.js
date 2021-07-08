@@ -10,6 +10,7 @@ export default auth;
 export const firestore=firebase.firestore();
 export const database={
     users:firestore.collection("users"),
+    posts:firestore.collection("posts"),
     getUserTimeStamp:firebase.firestore.FieldValue.serverTimestamp
 }
 

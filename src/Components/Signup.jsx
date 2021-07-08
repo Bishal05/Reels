@@ -53,7 +53,8 @@ function Signup(props) {
                     userId:uid,
                     userName,
                     createdAt:database.getUserTimeStamp(),
-                    profileUrl:downloadUrl
+                    profileUrl:downloadUrl,
+                    postIds:[]
                 })
                 setLoader(false);
                 props.history.push("/")
