@@ -4,6 +4,7 @@ import {makeStyles,Button} from "@material-ui/core"
 import MovieIcon from '@material-ui/icons/Movie';
 import { Avatar } from '@material-ui/core';
 import { database, storage } from '../firebase';
+import FavouriteIcon from '@material-ui/icons/Favorite';
 import uuid from 'react-uuid';
 
 
@@ -18,7 +19,25 @@ function Feed() {
         },
         input: {
             display: 'none',
+        },
+        icon:{
+            position:"absolute",
+            bottom:"-5vh",
+            fontSize:"2rem"
+        },
+        heart:{
+            left:"25vw",
+        },
+        chat:{
+            left:"32vw"
+        },
+        notSelected:{
+            color:"lightgray"
+        },
+        selected:{
+            color:"red"
         }
+
     }))
 
     // contexts from AuthContext 
@@ -39,12 +58,11 @@ function Feed() {
         setPageLoader(false);
     }, [])
 
-    //useEffect to get videos
+    //useEffect to get videos(posts)
     useEffect(async()=>{
         let unsubscribed=await database.posts.orderBy("createdAt","desc").onSnapshot(async(snapshot)=>{
             // console.log(snapshot);
             let videos=snapshot.docs.map((doc)=>doc.data())
-            // console.log(videos);
 
             let videoArr=[];
             for(let i=0;i<videos.length;i++){
@@ -52,8 +70,11 @@ function Feed() {
                 // console.log(videoUrl);
                 let auid=videos[i].auid;
                 let id=snapshot.docs[i].id;
-                let userObj=await database.users.doc(auid).get();
+                let userRef=await database.users.doc(auid).get()
+                let userObj=userRef.data();
+                // console.log(userObj);
                 let userProfileUrl=userObj.profileUrl;
+                // console.log(userProfileUrl);
                 let userName=userObj.username;
                 videoArr.push({
                     videoUrl,
@@ -84,7 +105,7 @@ function Feed() {
         e.preventDefault();
         let file=e?.target?.files[0];
         if(file!=null){
-            console.log(e.target.files[0]);
+            // console.log(e.target.files[0]);
         }
 
         if(file.size/(1024*1024)>20){
@@ -122,7 +143,7 @@ function Feed() {
                 }
                 // putting the post obj in post Collection
                 let postObj=await database.posts.add(obj);
-                console.log(postObj);
+                // console.log(postObj);
                 
                 // updating the user postid with the new post ids
                 await database.users.doc(currentUser.uid).update({
@@ -136,25 +157,26 @@ function Feed() {
             uploadTask.on('state_changed',f1,f2,f3);
     }
     
-    // const handelLike=async(puid)=>{
-        //     let postRef=await database.post.doc(puid).get();
-        //     let post=postRef.data();
-        //     let likes=post.likes;
+    const handelLike=async(puid)=>{
+        let postRef=await database.posts.doc(puid).get();
+        // console.log(postRef);
+        let post=postRef.data();
+        let likes=post.likes;
         
-    //     if(isLiked==false){
-        //         database.post.doc(puid).update({
-            //             "likes":[...likes,currentUser.uid]
-            //         })
-            //     }else{
-    //         let likes=post.likes.filter((likeUid)=>{
-    //             return likeUid!=currentUser.uid;
-    //         })
-    //         database.post.docs(puid).update({
-    //             "likes":likes
-    //         })
-    //     }
-    //     setLiked(!isLiked);
-    // }
+        if(isLiked==false){
+                database.posts.doc(puid).update({
+                        "likes":[...likes,currentUser.uid]
+                    })
+                }else{
+            let likes=post.likes.filter((likeUid)=>{
+                return likeUid!=currentUser.uid;
+            })
+            database.posts.doc(puid).update({
+                "likes":likes
+            })
+        }
+        setLiked(!isLiked);
+    }
 
     // to use styles 
     const classes=useStyles();
@@ -179,7 +201,7 @@ function Feed() {
             </div>
             <div className="feed">
                 {videos.map((videoObj)=>{
-                    console.log(videoObj)
+                    // console.log(videoObj)
                     return(
                         <div className="video-container">
                             <Video
@@ -187,6 +209,7 @@ function Feed() {
                                 id={videoObj.puid}
                                 userName={videoObj.userName}
                             ></Video>
+                            <FavouriteIcon className={[classes.icon,isLiked==false?classes.notSelected:classes.selected]} onClick={()=>{handelLike(videoObj.puid)}}></FavouriteIcon>
                         </div>
                     )
                 })}
@@ -196,7 +219,6 @@ function Feed() {
 }
 
 function Video(props) {
-    console.log(props.userName);
     return (
         <>
             <video style={{
